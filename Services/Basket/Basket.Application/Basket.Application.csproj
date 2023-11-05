@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Basket.Core\Basket.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.58.0" />
+    <PackageReference Include="MediatR" Version="12.1.1" />
+  </ItemGroup>
+	<ItemGroup>
+		<Protobuf Include="..\..\Discount\Discount.Application\Protos\discount.proto" GrpcServices="Client">
+			<Link>Protos\discount.proto</Link>
+		</Protobuf>
+	</ItemGroup>
+
+</Project>
