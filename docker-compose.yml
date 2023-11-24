@@ -10,8 +10,8 @@ services:
   discountdb:
     image: postgres
     
-  # orderdb:
-  #   image: mcr.microsoft.com/mssql/server:2017-latest
+  orderdb:
+    image: mcr.microsoft.com/mssql/server:2017-latest
     
   # rabbitmq:
   #   image: rabbitmq:3-management-alpine
@@ -40,11 +40,11 @@ services:
       context: .
       dockerfile: Services/Discount/Discount.API/Dockerfile
       
-  # ordering.api:
-  #   image: ${DOCKER_REGISTRY-}orderingapi
-  #   build:
-  #     context: .
-  #     dockerfile: Services/Ordering/Ordering.API/Dockerfile
+  ordering.api:
+    image: ${DOCKER_REGISTRY-}orderingapi
+    build:
+      context: .
+      dockerfile: Services/Ordering/Ordering.API/Dockerfile
       
   # ocelotapigw:
   #   image: ${DOCKER_REGISTRY-}ocelotapigw
