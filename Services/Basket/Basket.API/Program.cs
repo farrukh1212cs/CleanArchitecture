@@ -3,7 +3,9 @@ using Basket.Application.Handlers;
 using Basket.Core.Repositories;
 using Basket.Infrastructure.Repositories;
 using Discount.Grpc.Protos;
+using EventBus.Messages.Common;
 using HealthChecks.UI.Client;
+using MassTransit;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
@@ -54,6 +56,30 @@ builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+builder.Services.AddMassTransit(config =>
+{
+    //Mark this as consumer
+    //config.AddConsumer<BasketOrderingConsumer>();
+    //config.AddConsumer<BasketOrderingConsumerV2>();
+    config.UsingRabbitMq((ctx, cfg) =>
+    {
+        cfg.Host(configuration.GetValue<string>("EventBusSettings:HostAddress"));
+        //provide the queue name with consumer settings
+        //cfg.ReceiveEndpoint(EventBusConstants.BasketCheckoutQueue, c =>
+        //{
+        //    c.ConfigureConsumer<BasketOrderingConsumer>(ctx);
+        //});
+        ////V2 endpoint will pick items from here 
+        //cfg.ReceiveEndpoint(EventBusConstants.BasketCheckoutQueueV2, c =>
+        //{
+        //    c.ConfigureConsumer<BasketOrderingConsumerV2>(ctx);
+        //});
+    });
+});
+
+builder.Services.AddMassTransitHostedService();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -63,7 +89,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthorization();
 
