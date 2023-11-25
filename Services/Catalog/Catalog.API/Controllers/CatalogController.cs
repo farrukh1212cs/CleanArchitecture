@@ -8,7 +8,7 @@ using System.Net;
 
 namespace Catalog.API.Controllers
 {
-    public class CatalogController : ControllerBase
+    public class CatalogController : ApiController
     {
         private readonly IMediator _mediator;
         private readonly ILogger<CatalogController> _logger;
