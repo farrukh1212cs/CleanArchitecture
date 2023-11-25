@@ -6,7 +6,10 @@ using Discount.Grpc.Protos;
 using EventBus.Messages.Common;
 using HealthChecks.UI.Client;
 using MassTransit;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,7 +24,7 @@ IConfiguration configuration = new ConfigurationBuilder()
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+//builder.Services.AddControllers();
 
 //Redis Settings
 builder.Services.AddStackExchangeRedisCache(options =>
@@ -78,6 +81,27 @@ builder.Services.AddMassTransit(config =>
     });
 });
 
+
+//Identity Server Changes
+
+var userPolicy = new AuthorizationPolicyBuilder()
+    .RequireAuthenticatedUser()
+    .Build();
+
+builder.Services.AddControllers(config =>
+{
+    config.Filters.Add(new AuthorizeFilter(userPolicy));
+});
+//
+//
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                 .AddJwtBearer(options =>
+                 {
+                     options.Authority = "https://localhost:9009";
+                     options.Audience = "Basket";
+                 });
+
+
 builder.Services.AddMassTransitHostedService();
 
 var app = builder.Build();
@@ -91,6 +115,7 @@ if (app.Environment.IsDevelopment())
 
 //app.UseHttpsRedirection();
 app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
